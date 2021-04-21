@@ -7,13 +7,13 @@ import json
 
 def initializing():
     # Load a second sample picture and learn how to recognize it.
-    danai = face_recognition.load_image_file("WIN_20210419_19_59_43_Pro.jpg")
+    danai = face_recognition.load_image_file("WIN_20210421_13_12_19_Pro.jpg")
     #img = cv2.imread('danai.jpg')
     # Convert from BGR to RGB
     danai_encoding = face_recognition.face_encodings(danai)[0]
 
     d = {}
-    d['Danai'] = danai_encoding.tolist()
+    d['Anny'] = danai_encoding.tolist()
     with open('encodings.json', 'w') as fp:
         json.dump(d, fp)
 def read_encodings(jfile):
@@ -25,6 +25,10 @@ def read_encodings(jfile):
 encoding_dict = read_encodings("encodings.json")
 known_face_encodings = []
 known_face_names = []
+danai = face_recognition.load_image_file("WIN_20210421_13_12_19_Pro.jpg")
+danai_encoding = face_recognition.face_encodings(danai)[0]
+known_face_encodings.append(danai_encoding)
+known_face_names.append('Anny')
 for key, value in encoding_dict.items():
     known_face_encodings.append(np.array(value))
     known_face_names.append(key)
