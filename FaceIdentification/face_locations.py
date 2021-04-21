@@ -25,10 +25,7 @@ def read_encodings(jfile):
 encoding_dict = read_encodings("encodings.json")
 known_face_encodings = []
 known_face_names = []
-danai = face_recognition.load_image_file("WIN_20210421_13_12_19_Pro.jpg")
-danai_encoding = face_recognition.face_encodings(danai)[0]
-known_face_encodings.append(danai_encoding)
-known_face_names.append('Anny')
+
 for key, value in encoding_dict.items():
     known_face_encodings.append(np.array(value))
     known_face_names.append(key)
