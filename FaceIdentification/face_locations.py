@@ -22,6 +22,7 @@ def read_encodings(jfile):
     f.close()
     return data
 
+
 encoding_dict = read_encodings("encodings.json")
 known_face_encodings = []
 known_face_names = []
@@ -56,6 +57,10 @@ while True:
     cv2.imshow('Video', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+    if cv2.waitKey(1) & 0xFF == ord('+'):
+        known_face_encodings.append(face_encodings)
+        #speech2text to onoma edw
+        known_face_names.append(name)
 # Release handle to the webcam
 video_capture.release()
 cv2.destroyAllWindows()
