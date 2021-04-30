@@ -64,20 +64,41 @@ def takeCommand():
 
 
 def read_encodings(jfile):
-    f = open(jfile,)
-    data = json.load(f)
-    f.close()
-    return data
+    try:
+        f = open(jfile,)
+        data = json.load(f)
+        f.close()
+        return data
+    except Exception as e:
+        print(e)   
+        print("No known encodings.") 
+        return "None"
+
+
+def add_person():
+    speak("Tell the unknown person to stand in front of you.")
+    video_capture = cv2.VideoCapture(0)
+    face_encodings = []
+    while len(face_encodings)!=1:
+        ret, frame = video_capture.read()
+        face_locations = face_recognition.face_locations(frame)
+        face_encodings = face_recognition.face_encodings(frame, face_locations)
+    speak("What is the person's name?")
+    name = takeCommand()
+    #add name & encodings to json file
+
+
 
 def who():
     speak("Opening your camera")
     encoding_dict = read_encodings("encodings.json")
     known_face_encodings = []
     known_face_names = []
-
-    for key, value in encoding_dict.items():
-        known_face_encodings.append(np.array(value))
-        known_face_names.append(key)
+    
+    if encoding_dict != None:
+        for key, value in encoding_dict.items():
+            known_face_encodings.append(np.array(value))
+            known_face_names.append(key)
     
     video_capture = cv2.VideoCapture(0)
     while True:
@@ -105,6 +126,12 @@ def who():
     num = num + " person." if len (face_names)==1 else "people."
     speak(num)
     for face in face_names: speak(face)
+    if face_names.count("Unknown")>=1:
+        speak ("Do you know the Unknown?")
+        answer = takeCommand()
+        if 'yes' in answer:
+            add_person()
+    
     video_capture.release()
     cv2.destroyAllWindows()
 
