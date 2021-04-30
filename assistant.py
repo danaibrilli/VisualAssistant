@@ -6,13 +6,14 @@ import numpy as np
 import cv2
 import face_recognition
 import json
+import re
 import pytesseract
 
 
 
-engine = pyttsx3.init('sapi5')
+engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id) #1 gia male, 0 gia female
+engine.setProperty('voice', voices[1].id) #1 gia male, 0 gia female
 
 
 def speak(audio):
@@ -92,7 +93,7 @@ def add_person():
 
 def who():
     speak("Opening your camera")
-    encoding_dict = read_encodings("./FaceIdentifications/encodings.json")
+    encoding_dict = read_encodings("./FaceIdentification/encodings.json")
     known_face_encodings = []
     known_face_names = []
     
@@ -136,8 +137,21 @@ def who():
     video_capture.release()
     cv2.destroyAllWindows()
 
+def process (text):
+    text.strip(" \n")
+
+def read():
+    text = ""
+
+    img = cv2.imread("./TextReading/Document.jpg")
+
+    custom_config = r'--oem 3 --psm 6'
+    text = pytesseract.image_to_string(img)
+    final_text = re.sub(r'\W+', '', text)
+    speak (final_text)
+
 if __name__ == '__main__':
-    clear = lambda: os.system('cls')
+    clear = lambda: os.system('clear')
      
     clear()
     usrname()

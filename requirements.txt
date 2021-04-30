@@ -5,3 +5,5 @@ pip install json
 pip install face_recognition
 pip install matplotlib
 pip install numpy
+pip install pyttsx3
+sudo apt-get update && sudo apt-get install espeak # for linux systems
