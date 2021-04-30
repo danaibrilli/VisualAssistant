@@ -1,0 +1,7 @@
+sudo apt-get install cmake
+pip install dlib
+pip install opencv-python
+pip install json
+pip install face_recognition
+pip install matplotlib
+pip install numpy
