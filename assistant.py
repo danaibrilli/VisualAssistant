@@ -13,7 +13,7 @@ import pytesseract
 
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id) #1 gia male, 0 gia female
+engine.setProperty('voice', voices[0].id) #1 gia male, 0 gia female
 
 
 def speak(audio):
@@ -39,7 +39,6 @@ def usrname():
     with open('user.json', 'w') as fp:
         json.dump(d, fp)
     
-    speak("How can i Help you")
 
 def takeCommand():
      
@@ -79,8 +78,8 @@ def read_encodings(jfile):
 
 def add_person():
     speak("Tell the unknown person to stand in front of you.")
-    video_capture = cv2.VideoCapture(0)
     face_encodings = []
+    video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     while len(face_encodings)!=1:
         ret, frame = video_capture.read()
         face_locations = face_recognition.face_locations(frame)
@@ -88,6 +87,7 @@ def add_person():
     speak("What is the person's name?")
     name = takeCommand()
     #add name & encodings to json file
+    speak("Saved " + name)
 
 
 
@@ -102,11 +102,12 @@ def who():
             known_face_encodings.append(np.array(value))
             known_face_names.append(key)
     
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     while True:
         ret, frame = video_capture.read()
         face_locations = face_recognition.face_locations(frame)
         face_encodings = face_recognition.face_encodings(frame, face_locations)
+        print(face_locations)
         if face_locations != [] : 
             face_names = []
             for face,encoding in zip(face_locations, face_encodings):
@@ -143,7 +144,7 @@ def process (text):
 def read():
     text = ""
 
-    img = cv2.imread("./TextReading/Document.jpg")
+    img = cv2.imread("./TextReading/example.png")
 
     custom_config = r'--oem 3 --psm 6'
     text = pytesseract.image_to_string(img)
@@ -151,13 +152,18 @@ def read():
     speak (final_text)
 
 if __name__ == '__main__':
-    clear = lambda: os.system('clear')
+    #clear = lambda: os.system('clear') #for linux
+    clear = lambda: os.system('cls') #for windows
      
     clear()
     usrname()
-    query = takeCommand()
-    print(query)
-    if "Who" in query or "who" in query:
-        who()
-    if "Read" in query or "read" in query or "text" in query:
-        read()
+    while True:
+        speak("What can I do for you?")
+        query = takeCommand()
+        print(query)
+        if "Who" in query or "who" in query:
+            who()
+        if "Read" in query or "read" in query or "text" in query or "document" in query:
+            read()
+        if "stop" in query:
+            exit()

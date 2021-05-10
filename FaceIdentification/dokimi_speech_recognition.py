@@ -9,7 +9,7 @@ import json
 
 
 
-engine = pyttsx3.init('sapi5')
+engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id) #1 gia male, 0 gia female
 
