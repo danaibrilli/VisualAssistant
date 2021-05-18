@@ -14,7 +14,7 @@ import pytesseract
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id) #1 gia male, 0 gia female
-
+engine.setProperty("rate", 170)
 
 def speak(audio):
     engine.say(audio)
@@ -148,8 +148,36 @@ def read():
 
     custom_config = r'--oem 3 --psm 6'
     text = pytesseract.image_to_string(img)
-    final_text = re.sub(r'\W+', '', text)
-    speak (final_text)
+    #final_text = re.sub(r'\W+', '', text)
+    print(text)
+    speak (text)
+
+def process (text):
+    text.strip(" \n")
+    text = re.sub("[^0-9]", "", text)
+    return text
+
+def load_images_from_folder(folder):
+    images = []
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder,filename))
+        if img is not None:
+            images.append(img)
+    return images
+
+def money():
+    text = ""
+    imgs = load_images_from_folder("./MoneyRecognition/cropped")
+    custom_config = r'--oem 3 --psm 10'
+    s = 0
+    for img in imgs:
+        text = pytesseract.image_to_string(img, config=custom_config)
+        text = process(text)
+        s += int(text)
+        print(text)
+    speak("You have "+ str(s) + "euros.")
+    print(s)
+
 
 if __name__ == '__main__':
     #clear = lambda: os.system('clear') #for linux
@@ -160,10 +188,11 @@ if __name__ == '__main__':
     while True:
         speak("What can I do for you?")
         query = takeCommand()
-        print(query)
         if "Who" in query or "who" in query:
             who()
         if "Read" in query or "read" in query or "text" in query or "document" in query:
             read()
-        if "stop" in query:
-            exit()
+        if "money" in query or "how much" in query:
+            money()
+        if "stop" in query or "exit" in query or "quit" in query:
+            exit() 
