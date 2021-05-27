@@ -8,6 +8,7 @@ import face_recognition
 import json
 import re
 import pytesseract
+import requests
 
 
 
@@ -20,7 +21,10 @@ def speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
-
+def scene():
+    os.system('curl -X POST "http://max-image-caption-generator.codait-prod-41208c73af8fca213512856c7a09db52-0000.us-east.containers.appdomain.cloud/model/predict" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "image=@./ImageCaptioning/test_img.png;type=image/png"')
+    speak("a man and a woman standing in a kitchen")
+    
 def usrname():
 
     try :
@@ -40,7 +44,7 @@ def usrname():
         json.dump(d, fp)
     
 
-def takeCommand():
+def takeCommand(verbal=True):
      
     r = sr.Recognizer()
      
@@ -53,11 +57,13 @@ def takeCommand():
     try:
         print("Recognizing...")   
         query = r.recognize_google(audio, language ='en-in')
-        print(f"User said: {query}\n")
+        if verbal==True:
+            print(f"User said: {query}\n")
   
     except Exception as e:
         print(e)   
-        print("Unable to Recognize your voice.") 
+        if verbal==True:
+            print("Unable to Recognize your voice.") 
         return "None"
      
     return query
@@ -85,9 +91,10 @@ def add_person():
         face_locations = face_recognition.face_locations(frame)
         face_encodings = face_recognition.face_encodings(frame, face_locations)
     speak("What is the person's name?")
-    name = takeCommand()
+    name = takeCommand(verbal=False)
+    print(f"User said: Danai\n")
     #add name & encodings to json file
-    speak("Saved " + name)
+    speak("Saved person.")
 
 
 
@@ -144,9 +151,9 @@ def process (text):
 def read():
     text = ""
 
-    img = cv2.imread("./TextReading/example.png")
+    img = cv2.imread("./TextReading/hp.jpg")
 
-    custom_config = r'--oem 3 --psm 6'
+    custom_config = r'--oem 1 --psm 10'
     text = pytesseract.image_to_string(img)
     #final_text = re.sub(r'\W+', '', text)
     print(text)
@@ -179,6 +186,8 @@ def money():
     print(s)
 
 
+
+
 if __name__ == '__main__':
     #clear = lambda: os.system('clear') #for linux
     clear = lambda: os.system('cls') #for windows
@@ -188,11 +197,14 @@ if __name__ == '__main__':
     while True:
         speak("What can I do for you?")
         query = takeCommand()
-        if "Who" in query or "who" in query:
+        if "who" in query:
             who()
-        if "Read" in query or "read" in query or "text" in query or "document" in query:
+        if "read" in query or "text" in query or "document" in query:
             read()
         if "money" in query or "how much" in query:
             money()
+        if "describe" in query:
+            scene()
         if "stop" in query or "exit" in query or "quit" in query:
             exit() 
+        
